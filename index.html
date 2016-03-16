@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Калькулятор матриц</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="index.js"></script>
+</head>
+<body onload="init()">
+    <article class="wrapper">
+        <aside class="control background-gray" id="control-pane">
+            <button class="button-multiplication" onclick='multiplicationMatrix()'>Умножить матрицы</button><div class="angle"></div>
+            <div class="separator-50"></div>
+            <button onclick='clearAllMatrix()'><span class="logo-clear">Очистить матрицы</span></button>
+            <br>
+            <button onclick='changePositionMatrix()'><span class="logo-replace">Поменять матрицы местами</span></button>
+            <div class="separator-50"></div>
+            <div class="radio-menu">
+                <input type="radio" name="matrix" id="matrix-input-a" checked>
+                <label for="matrix-input-a" class="checkbox"></label>
+                <label for="matrix-input-a" class="name-matrix-radio">Матрица А</label>
+            
+                <input type="radio" name="matrix" id="matrix-input-b">
+                <label for="matrix-input-b" class="checkbox"></label>
+                <label for="matrix-input-b"class="name-matrix-radio">Матрица Б</label>
+            </div>
+            <button onclick='addColumn()'><span class="logo-plus">Добавить</span></button>
+            <button onclick='removeColumn()'><span class="logo-minus">Удалить</span></button>
+            <span>строку</span>
+            <br>
+            <button onclick='addLine()'><span class="logo-plus">Добавить</span></button>
+            <button onclick='removeLine()'><span class="logo-minus">Удалить</span></button>
+            <span>столбец</span>
+            <div class="separator-50"></div>
+            <div id="error-multiply" class="hidden">
+                Такие матрицы нельзя перемножить, так как количество столбцов матрицы А, не равно колличевству строк матрицы В.
+            </div>
+        </aside>
+        <section class="main-form">
+            <div class="matrix-c" id="matrix-c">
+                <div class="border-left"></div>
+                <div class="column" id="column-c1">
+                    <input class="cell-matrix" id="cell-c1,1"
+                        placeholder="c1,1"
+                        pattern="\d+([.,]\d+)?">
+                    <input class="cell-matrix" id="cell-c2,1"
+                        placeholder="c2,1"
+                        pattern="\d+([.,]\d+)?">
+                </div>
+                <div class="column" id="column-c2">
+                    <input class="cell-matrix" id="cell-c1,2"
+                        placeholder="c1,2"
+                        pattern="\d+([.,]\d+)?">
+                    <input class="cell-matrix" id="cell-c2,2"
+                        placeholder="c2,2"
+                        pattern="\d+([.,]\d+)?">
+                </div>
+                <div class="border-right" id="border-matrix-c"></div>
+            </div>
+            <div class="matrix-a" id="matrix-a">
+                <div class="border-left"></div>
+                <div class="column" id="column-a1">
+                    <input class="cell-matrix" id="cell-a1,1"
+                        placeholder="a1,1"
+                        pattern="\d+([.,]\d+)?">
+                    <input class="cell-matrix" id="cell-a2,1"
+                        placeholder="a2,1"
+                        pattern="\d+([.,]\d+)?">
+                </div>
+                <div class="column" id="column-a2">
+                    <input class="cell-matrix" id="cell-a1,2"
+                        placeholder="a1,2"
+                        pattern="\d+([.,]\d+)?">
+                    <input class="cell-matrix" id="cell-a2,2"
+                        placeholder="a2,2"
+                        pattern="\d+([.,]\d+)?">
+                </div>
+                <div class="border-right" id="border-matrix-a"></div>
+            </div>
+            <p class="name-matrix">A</p>
+            <div class="separator-10"></div>
+            <div class="matrix-b" id="matrix-b">
+                <div class="border-left"></div>
+                <div class="column" id="column-b1">
+                    <input class="cell-matrix" id="cell-b1,1"
+                        placeholder="b1,1"
+                        pattern="\d+([.,]\d+)?">
+                    <input class="cell-matrix" id="cell-b2,1"
+                        placeholder="b2,1"
+                        pattern="\d+([.,]\d+)?">
+                </div>
+                <div class="column" id="column-b2">
+                    <input class="cell-matrix" id="cell-b1,2"
+                        placeholder="b1,2"
+                        pattern="\d+([.,]\d+)?">
+                    <input class="cell-matrix" id="cell-b2,2"
+                        placeholder="b2,2"
+                        pattern="\d+([.,]\d+)?">
+                </div>
+                <div class="border-right" id="border-matrix-b"></div>
+                <div class="separator"></div>
+                <p class="name-matrix">B</p>
+            </div>
+        </section>
+    </article>
+</body>
+</html>

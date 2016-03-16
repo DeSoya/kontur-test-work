@@ -1,0 +1,262 @@
+body
+{
+    margin: 0;
+}
+
+.wrapper
+{
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    font: 14px "Segoe Ui";
+    color: #404040;
+    line-height: 20px;
+    min-width: 800px;
+}
+.control
+{
+    width: 300px;
+    padding: 30px;
+    background-color: #bcbcbc;
+    min-height: calc(100vh - 60px);
+}
+.main-form
+{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    padding-left: 20px;
+    padding-top: 5px;
+}
+.radio-menu
+{
+    display: flex;
+    flex-flow: row nowrap;
+    height: 20px;
+    align-items: center;
+}
+
+.matrix-b,
+.matrix-c,
+.matrix-a
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    margin: 10px;
+}
+
+.cell-matrix
+{
+    display: block;
+    text-align: center;
+
+    width: 40px;
+    height: 40px;
+    margin: 10px 10px 10px 0;
+}
+.cell-matrix:focus
+{
+    border: 2px solid #5199db;
+}
+
+.border-left
+{
+    width: 10px;
+    border-left: 2px solid #000;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+.border-right
+{
+    width: 10px;
+    margin-left: -10px;
+    border-right: 2px solid #000;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+.name-matrix
+{
+    font-size: 18px;
+    font-weight: bold;
+}
+.name-matrix-radio
+{
+    height: 24px;
+}
+.control-background-error
+{
+    background-color: #f6c1c0;
+}
+.control-background-input
+{
+    background-color: #5199db;
+}
+.separator
+{
+    width: 100%;
+}
+.separator-10
+{
+    width: 100%;
+    height: 10px;
+}
+.separator-50
+{
+    width: 100%;
+    height: 50px;
+}
+.hidden
+{
+    display: none;
+}
+button
+{
+    background: linear-gradient(to top, #ececec, #fdfdfd);
+    border: 1px solid rgba(0, 0, 0, .4);
+    border-bottom: 1px solid rgba(0, 0, 0, .6);
+    border-radius: 2px;
+    height: 28px;
+    margin: 5px 5px 5px 0;
+    font: 14px "Segoe Ui";
+    line-height: 5px;
+}
+.button-multiplication
+{
+    background: linear-gradient(to top, #38920c, #4ba91d);
+    border: 2px solid #5c823d;
+    padding: 10px;
+    padding-left: 20px;
+    height: 40px;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 2px 0 0 2px;
+    border-bottom: 2px solid #43672c;
+    border-right: none;
+}
+
+
+.angle
+{
+    display: inline-block;
+    height: 40px;
+    width: 12px;
+    margin: 0 0 -13px -5px;
+    background-image: url(image/angle.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: -1px 0;  
+}
+
+button:focus + .angle
+{
+    background-position: -14px 0;  
+}
+button:hover + .angle
+{
+    background-position: -28px 0;  
+}
+button:focus:hover + .angle
+{
+    background-position: -54px 0;  
+}
+button:active + .angle
+{
+    background-position: -41px 0 !important;  
+}
+button:focus
+{
+    border: 1px solid rgba(0, 0, 0, .4);
+    box-shadow: inset 0 1px 0 #fff;
+    box-shadow: 1px 0px #5199db, -1px 0px #5199db, 0px 1px #5199db, 0px -1px #5199db;
+}
+button:hover
+{
+    background: linear-gradient(to top, #dfdfdf, #f2f2f2);
+}
+button:active
+{
+    background: linear-gradient(to top, #d9d9d9, #d9d9d9);
+    border-left: 1px solid rgba(0, 0, 0, .4);
+    border-bottom: 1px solid rgba(0, 0, 0, .4);
+    border-right: 1px solid rgba(0, 0, 0, .4);
+    border-top: 1px solid rgba(0, 0, 0, .7);
+    box-shadow: inset 0 1px 3px #a6a6a6;
+}
+.button-multiplication:focus
+{
+    border: 2px solid #5199db;
+    border-right: none;
+}
+.button-multiplication:hover
+{
+    background: linear-gradient(to top, #317e0b, #3b8d13);
+}
+.button-multiplication:active
+{
+    background: #35840e;
+    border-left: 2px solid rgba(0, 0, 0, .4);
+    border-bottom: 2px solid rgba(0, 0, 0, .4);
+    border-top: 2px solid rgba(0, 0, 0, .55);
+    box-shadow: inset 0 1px 0 #255c09;
+}
+input[type="radio"]
+{
+    position: absolute;
+    top: -50px;
+}
+input[type="radio"] + label::before
+{
+    content: "";
+    display: inline-block;
+    height: 18px;
+    width: 18px;
+    margin: -5px 2px 0 0;
+
+    cursor: pointer;
+    background-image: url(image/radio.png);
+    background-repeat: no-repeat;
+}
+.checkbox
+{
+    height: 18px;
+    width: 18px;
+    margin: 5px;
+}
+input[type="radio"]:hover + label::before
+{
+    background-position: -72px 0;  
+}
+input[type="radio"]:checked + label::before
+{
+    background-position: -90px 0px;  
+}
+
+
+.logo-minus::before,
+.logo-clear::before,
+.logo-replace::before,
+.logo-plus::before
+{
+    content: "";
+    display: inline-block;
+    margin-right: 5px;
+    width: 12px;
+    height: 11px;
+    background-image: url(image/logo.png);
+    background-repeat: no-repeat;
+}
+.logo-replace::before
+{
+    background-position: -12px 0px; 
+}
+.logo-plus::before
+{
+    background-position: -24px 0px; 
+}
+.logo-minus::before
+{
+    background-position: -36px 0px; 
+}
