@@ -11,7 +11,7 @@ body
     font: 14px "Segoe Ui";
     color: #404040;
     line-height: 20px;
-    min-width: 800px;
+    min-width: 1000px;
 }
 .control
 {
@@ -36,9 +36,7 @@ body
     align-items: center;
 }
 
-.matrix-b,
-.matrix-c,
-.matrix-a
+.matrix
 {
     display: flex;
     flex-direction: row;
@@ -46,8 +44,20 @@ body
     align-items: stretch;
     justify-content: center;
     margin: 10px;
+    margin-right: 20px;
 }
-
+.matrix-c
+{
+    margin-left: 5px;
+}
+.matrix__values
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+}
 .cell-matrix
 {
     display: block;
@@ -94,6 +104,10 @@ body
 {
     background-color: #5199db;
 }
+.control-error
+{
+    color: #f00;
+}
 .separator
 {
     width: 100%;
@@ -136,7 +150,6 @@ button
     border-bottom: 2px solid #43672c;
     border-right: none;
 }
-
 
 .angle
 {
