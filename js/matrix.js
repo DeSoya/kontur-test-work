@@ -5,7 +5,6 @@ var Matrix = (function () {
             sizeX: 1,
             sizeY: 1,
             setValue: setValue,
-            getValues: getValues,
             changeSize: changeSize,
             clearMatrix: clearMatrix
         };
@@ -54,15 +53,6 @@ var Matrix = (function () {
             this.matrix[x] = [];
         }
         this.matrix[x][y] = value;
-    }
-    function getValues() {
-        var matrix;
-        for (var x = 0; x < this.sizeX; x++) {
-            for (var y = 0; y < this.sizeY; y++) {
-                matrix[x] = {[y]: this.matrix[x][y]};
-            }
-        }
-        return matrix;
     }
     function clearMatrix() {
         for (var x = 0; x < this.sizeX; x++) {
