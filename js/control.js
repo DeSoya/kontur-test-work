@@ -1,131 +1,147 @@
-$('.button-multiplication').on('click', function () {
-    if (mA.sizeX !== mB.sizeY) {
-        $('#control-pane').removeClass('control-background-input').addClass('control-background-error');
-        $('.control-error').removeClass('hidden');
-        return;
-    }
-    $('#control-pane').removeClass('control-background-error');
-    $('.control-error').addClass('hidden');
 
-    setValuesInMatrix(mA, nameA);
-    setValuesInMatrix(mB, nameB);
-    mC = Matrix.multiplication(mA, mB);
-    getValuesOutMatrix(mC, nameC);
-});
-
-$('.button-change-position').on('click', function () {
-    setValuesInMatrix(mA, nameA);
-    setValuesInMatrix(mB, nameB);
-    var tempMatrix = mA;
-    mA = mB;
-    mB = tempMatrix;
-    mC.changeSize(mB.sizeX, mA.sizeY);
-    getValuesOutMatrix(mA, nameA);
-    getValuesOutMatrix(mB, nameB);
-
-    updateMatrix();
+(function () {
     updateFocusCell();
-});
-
-$('.button-clear-matrix').on('click', function () {
-    mA.clearMatrix();
-    mB.clearMatrix();
-    mC.clearMatrix();
-    getValuesOutMatrix(mA, nameA);
-    getValuesOutMatrix(mB, nameB);
-    getValuesOutMatrix(mC, nameC);
-});
-
-$('.button-add-line').on('click', function () {
-    if ($('#matrix-input-a').prop('checked')) {
-        if (mA.sizeY === 10) {
+    updateInput();
+    $('.button-multiplication').on('click', function () {
+        if (view.mA.sizeX !== view.mB.sizeY) {
+            $('#control-pane').removeClass('control-background-input')
+                .addClass('control-background-error');
+            $('.control-error').removeClass('hidden');
             return;
         }
-        mA.changeSize(mA.sizeX, mA.sizeY + 1);
-        mC.changeSize(mC.sizeX, mC.sizeY + 1);
-    } else {
-        if (mB.sizeY === 10) {
-            return;
-        }
-        mB.changeSize(mB.sizeX, mB.sizeY + 1);
-    }
-    updateMatrix();
-    updateFocusCell();
-});
+        $('#control-pane').removeClass('control-background-error');
+        $('.control-error').addClass('hidden');
 
-$('.button-remove-line').on('click', function () {
-    if ($('#matrix-input-a').prop('checked')) {
-        if (mA.sizeY === 2) {
-            return;
-        }
-        mA.changeSize(mA.sizeX, mA.sizeY - 1);
-        mC.changeSize(mC.sizeX, mC.sizeY - 1);
-    } else {
-        if (mB.sizeY === 2) {
-            return;
-        }
-        mB.changeSize(mB.sizeX, mB.sizeY - 1);
-    }
-    updateMatrix();
-    updateFocusCell();
-});
-
-$('.button-add-column').on('click', function () {
-    if ($('#matrix-input-a').prop('checked')) {
-        if (mA.sizeX === 10) {
-            return;
-        }
-        mA.changeSize(mA.sizeX + 1, mA.sizeY);
-    } else {
-        if (mB.sizeX === 10) {
-            return;
-        }
-        mB.changeSize(mB.sizeX + 1, mB.sizeY);
-        mC.changeSize(mC.sizeX + 1, mC.sizeY);
-    }
-    updateMatrix();
-    updateFocusCell();
-});
-
-$('.button-remove-column').on('click', function () {
-    if ($('#matrix-input-a').prop('checked')) {
-        if (mA.sizeX === 2) {
-            return;
-        }
-        mA.changeSize(mA.sizeX - 1, mA.sizeY);
-    } else {
-        if (mB.sizeX === 2) {
-            return;
-        }
-        mB.changeSize(mB.sizeX - 1, mB.sizeY);
-        mC.changeSize(mC.sizeX - 1, mC.sizeY);
-    }
-    updateMatrix();
-    updateFocusCell();
-});
-
-function setValuesInMatrix(matrix, name) {
-    for (var x = 0; x < matrix.sizeX; x++) {
-        for (var y = 0; y < matrix.sizeY; y++) {
-            var value = $('.cell-' + name + y + '-' + x).val();
-            matrix.setValue(x, y, value);
-        }
-    }
-    return matrix;
-}
-
-function getValuesOutMatrix(matrix, name) {
-    for (var x = 0; x < matrix.sizeX; x++) {
-        for (var y = 0; y < matrix.sizeY; y++) {
-            $('.cell-' + name + y + '-' + x).val(matrix.matrix[x][y]);
-        }
-    }
-}
-
-function updateMatrix() {
-    window.ee.emit('App.changeMatrix', {
-        matrixA: mA,
-        matrixB: mB,
-        matrixC: mC
+        view.mC = view.mA.multiplication(view.mB);
+        view.update();
+        updateInput();
     });
-}
+
+    $('.button-change-position').on('click', function () {
+        var tempMatrix = view.mA.copy();
+
+        view.mA = view.mB.copy();
+        view.mB = tempMatrix;
+        view.mC.changeSize(view.mB.sizeX, view.mA.sizeY);
+
+        view.update();
+        updateInput();
+        updateFocusCell();
+    });
+
+    $('.button-clear-matrix').on('click', function () {
+        view.mA.clearMatrix();
+        view.mB.clearMatrix();
+        view.mC.clearMatrix();
+        view.update();
+    });
+
+    $('.button-add-line').on('click', function () {
+        if ($('#matrix-input-a').prop('checked')) {
+            if (view.mA.sizeY === 10) {
+                return;
+            }
+            view.mA.changeSize(view.mA.sizeX, view.mA.sizeY + 1);
+            view.mC.changeSize(view.mC.sizeX, view.mC.sizeY + 1);
+        } else {
+            if (view.mB.sizeY === 10) {
+                return;
+            }
+            view.mB.changeSize(view.mB.sizeX, view.mB.sizeY + 1);
+        }
+        view.update();
+        updateInput();
+        updateFocusCell();
+    });
+
+    $('.button-remove-line').on('click', function () {
+        if ($('#matrix-input-a').prop('checked')) {
+            if (view.mA.sizeY === 2) {
+                return;
+            }
+            view.mA.changeSize(view.mA.sizeX, view.mA.sizeY - 1);
+            view.mC.changeSize(view.mC.sizeX, view.mC.sizeY - 1);
+        } else {
+            if (view.mB.sizeY === 2) {
+                return;
+            }
+            view.mB.changeSize(view.mB.sizeX, view.mB.sizeY - 1);
+        }
+        view.update();
+        updateInput();
+        updateFocusCell();
+    });
+
+    $('.button-add-column').on('click', function () {
+        if ($('#matrix-input-a').prop('checked')) {
+            if (view.mA.sizeX === 10) {
+                return;
+            }
+            view.mA.changeSize(view.mA.sizeX + 1, view.mA.sizeY);
+        } else {
+            if (view.mB.sizeX === 10) {
+                return;
+            }
+            view.mB.changeSize(view.mB.sizeX + 1, view.mB.sizeY);
+            view.mC.changeSize(view.mC.sizeX + 1, view.mC.sizeY);
+        }
+        view.update();
+        updateInput();
+        updateFocusCell();
+    });
+
+    $('.button-remove-column').on('click', function () {
+        if ($('#matrix-input-a').prop('checked')) {
+            if (view.mA.sizeX === 2) {
+                return;
+            }
+            view.mA.changeSize(view.mA.sizeX - 1, view.mA.sizeY);
+        } else {
+            if (view.mB.sizeX === 2) {
+                return;
+            }
+            view.mB.changeSize(view.mB.sizeX - 1, view.mB.sizeY);
+            view.mC.changeSize(view.mC.sizeX - 1, view.mC.sizeY);
+        }
+        view.update();
+        updateInput();
+        updateFocusCell();
+    });
+
+    function updateInput() {
+        $('.cell-matrix').on('change', function () {
+            var classList = this.className.split(/\s+/);
+            var re = /cell-(\w+)(\d+)-(\d+)/;
+
+            for (var i = 0; i < classList.length; i++) {
+                if ((matrixName = re.exec(classList[i])) !== null) {
+                    var name = matrixName[1];
+                    var x = Number(matrixName[3]);
+                    var y = Number(matrixName[2]);
+
+                    if (name === view.nameA) {
+                        view.mA.setValue(x, y, this.value);
+                    }
+                    if (name === view.nameB) {
+                        view.mB.setValue(x, y, this.value);
+                    }
+                    if (name === view.nameC) {
+                        view.mC.setValue(x, y, this.value);
+                    }
+                }
+            }
+        });
+    }
+
+    function updateFocusCell() {
+        $('.cell-matrix').on('blur', function () {
+            $('#control-pane').removeClass('control-background-input');
+        });
+
+        $('.cell-matrix').on('focus', function () {
+            $('#control-pane').removeClass('control-background-error')
+                .addClass('control-background-input');
+            $('.control-error').addClass('hidden');
+        });
+    }
+}());
