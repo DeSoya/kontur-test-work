@@ -2,6 +2,7 @@
 (function () {
     updateFocusCell();
     updateInput();
+
     $('.button-multiplication').on('click', function () {
         if (view.mA.sizeX !== view.mB.sizeY) {
             $('#control-pane').removeClass('control-background-input')
@@ -41,13 +42,21 @@
             if (view.mA.sizeY === 10) {
                 return;
             }
+            $('.button-remove-line').attr('disabled', false);
             view.mA.changeSize(view.mA.sizeX, view.mA.sizeY + 1);
             view.mC.changeSize(view.mC.sizeX, view.mC.sizeY + 1);
+            if (view.mA.sizeY === 10) {
+                $('.button-add-line').attr('disabled', true);
+            }
         } else {
+            $('.button-remove-line').attr('disabled', false);
             if (view.mB.sizeY === 10) {
                 return;
             }
             view.mB.changeSize(view.mB.sizeX, view.mB.sizeY + 1);
+            if (view.mB.sizeY === 10) {
+                $('.button-add-line').attr('disabled', true);
+            }
         }
         view.update();
         updateInput();
@@ -59,13 +68,22 @@
             if (view.mA.sizeY === 2) {
                 return;
             }
+            $('.button-add-line').attr('disabled', false);
             view.mA.changeSize(view.mA.sizeX, view.mA.sizeY - 1);
             view.mC.changeSize(view.mC.sizeX, view.mC.sizeY - 1);
+
+            if (view.mA.sizeY === 2) {
+                $('.button-remove-line').attr('disabled', true);
+            }
         } else {
             if (view.mB.sizeY === 2) {
                 return;
             }
+            $('.button-add-line').attr('disabled', false);
             view.mB.changeSize(view.mB.sizeX, view.mB.sizeY - 1);
+            if (view.mB.sizeY === 2) {
+                $('.button-remove-line').attr('disabled', true);
+            }
         }
         view.update();
         updateInput();
@@ -77,13 +95,21 @@
             if (view.mA.sizeX === 10) {
                 return;
             }
+            $('.button-remove-column').attr('disabled', false);
             view.mA.changeSize(view.mA.sizeX + 1, view.mA.sizeY);
+             if (view.mA.sizeX === 10) {
+                $('.button-add-column').attr('disabled', true);
+            }
         } else {
             if (view.mB.sizeX === 10) {
                 return;
             }
+            $('.button-remove-column').attr('disabled', false);
             view.mB.changeSize(view.mB.sizeX + 1, view.mB.sizeY);
             view.mC.changeSize(view.mC.sizeX + 1, view.mC.sizeY);
+            if (view.mB.sizeX === 10) {
+                $('.button-add-column').attr('disabled', true);
+            }
         }
         view.update();
         updateInput();
@@ -95,19 +121,61 @@
             if (view.mA.sizeX === 2) {
                 return;
             }
+            $('.button-add-column').attr('disabled', false);
             view.mA.changeSize(view.mA.sizeX - 1, view.mA.sizeY);
+            if (view.mA.sizeX === 2) {
+                $('.button-remove-column').attr('disabled', true);
+            }
         } else {
             if (view.mB.sizeX === 2) {
                 return;
             }
+            $('.button-add-column').attr('disabled', false);
             view.mB.changeSize(view.mB.sizeX - 1, view.mB.sizeY);
             view.mC.changeSize(view.mC.sizeX - 1, view.mC.sizeY);
+            if (view.mB.sizeX === 2) {
+                $('.button-remove-column').attr('disabled', true);
+            }
         }
         view.update();
         updateInput();
         updateFocusCell();
     });
-
+    
+    $('#matrix-input-a').on('click', function () {
+        changeButtonState(view.mA);
+    });
+    $('#matrix-input-b').on('click', function () {
+        changeButtonState(view.mB);
+    });
+    function changeButtonState(matrix) { 
+        switch (matrix.sizeX) {
+            case 10: 
+                $('.button-add-column').attr('disabled', true);
+                $('.button-remove-column').attr('disabled', false);
+                break;
+            case 2:
+                $('.button-add-column').attr('disabled', false);
+                $('.button-remove-column').attr('disabled', true);
+                break;
+            default:
+                $('.button-add-column').attr('disabled', false);
+                $('.button-remove-column').attr('disabled', false);
+        }
+        switch (matrix.sizeY) {
+            case 10:
+                $('.button-add-line').attr('disabled', true);
+                $('.button-remove-line').attr('disabled', false);
+                break;
+            case 2:
+                $('.button-add-line').attr('disabled', false);
+                $('.button-remove-line').attr('disabled', true);
+                break;
+            default:
+                $('.button-add-line').attr('disabled', false);
+                $('.button-remove-line').attr('disabled', false);
+            }
+    };
     function updateInput() {
         $('.cell-matrix').on('change', function () {
             var classList = this.className.split(/\s+/);

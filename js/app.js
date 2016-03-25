@@ -26,10 +26,13 @@ var view = {};
                         { className: 'column', key: 'column' + name + i},
                         col.map(function (row, k) {
                             return React.createElement('input', {
-                                className: 'cell-matrix cell-' + name + k + '-' + i,
+                                className: 
+                                    'cell-matrix cell-' + name + k + '-' + i +
+                                    ' matrix-cell-name-' + name,
                                 key: name + (k + 1) + ',' + (i + 1),
                                 placeholder: name + (k + 1) + ',' + (i + 1),
                                 pattern: '\\d+([.,]\\d+)?',
+                                disabled: name === view.nameC, 
                                 defaultValue: row });
                         })
                     );
@@ -107,11 +110,6 @@ var view = {};
         }
     });
 
-    ReactDOM.render(React.createElement(App, {
-        matrixA: view.mA, nameA: view.nameA,
-        matrixB: view.mB, nameB: view.nameB,
-        matrixC: view.mC, nameC: view.nameC }), document.getElementById('main-form'));
-
     view.update = function () {
         $('.main-form').remove();
 
@@ -120,4 +118,5 @@ var view = {};
             matrixB: view.mB, nameB: view.nameB,
             matrixC: view.mC, nameC: view.nameC }), document.getElementById('main-form'));
     };
+    view.update();
 }());
