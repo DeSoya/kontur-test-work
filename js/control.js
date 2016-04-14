@@ -1,10 +1,9 @@
+var ControlPane;
 
 (function () {
-    updateFocusCell();
-    updateInput();
-
-    $('.button-multiplication').on('click', function () {
-        if (view.mA.sizeX !== view.mB.sizeY) {
+    var buttonMultiply = React.createClass({
+        multiplyMatrix: function() {
+            if (app.matrixA.sizeX !== app.matrixB.sizeY) {
             $('#control-pane').removeClass('control-background-input')
                 .addClass('control-background-error');
             $('.control-error').removeClass('hidden');
@@ -13,141 +12,331 @@
         $('#control-pane').removeClass('control-background-error');
         $('.control-error').addClass('hidden');
 
-        view.mC = view.mA.multiplication(view.mB);
-        view.update();
-        updateInput();
-    });
+        app.matrixC = app.matrixA.multiplication(app.matrixB);
+        // window.ee.emit('App.changeMatrix', {});
 
-    $('.button-change-position').on('click', function () {
-        var tempMatrix = view.mA.copy();
+        app.update();
+        },
 
-        view.mA = view.mB.copy();
-        view.mB = tempMatrix;
-        view.mC.changeSize(view.mB.sizeX, view.mA.sizeY);
-
-        view.update();
-        updateInput();
-        updateFocusCell();
-    });
-
-    $('.button-clear-matrix').on('click', function () {
-        view.mA.clearMatrix();
-        view.mB.clearMatrix();
-        view.mC.clearMatrix();
-        view.update();
-    });
-
-    $('.button-add-line').on('click', function () {
-        if ($('#matrix-input-a').prop('checked')) {
-            if (view.mA.sizeY === 10) {
-                return;
-            }
-            $('.button-remove-line').attr('disabled', false);
-            view.mA.changeSize(view.mA.sizeX, view.mA.sizeY + 1);
-            view.mC.changeSize(view.mC.sizeX, view.mC.sizeY + 1);
-            if (view.mA.sizeY === 10) {
-                $('.button-add-line').attr('disabled', true);
-            }
-        } else {
-            $('.button-remove-line').attr('disabled', false);
-            if (view.mB.sizeY === 10) {
-                return;
-            }
-            view.mB.changeSize(view.mB.sizeX, view.mB.sizeY + 1);
-            if (view.mB.sizeY === 10) {
-                $('.button-add-line').attr('disabled', true);
-            }
+        render: function() {
+            return React.createElement(
+                'div',
+                {},
+                React.createElement(
+                    'button',
+                    { 
+                        className: 'button-multiplication',
+                        onClick: this.multiplyMatrix },
+                    'Умножить матрицы'
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'angle'}
+                )
+            );
         }
-        view.update();
-        updateInput();
-        updateFocusCell();
     });
-
-    $('.button-remove-line').on('click', function () {
-        if ($('#matrix-input-a').prop('checked')) {
-            if (view.mA.sizeY === 2) {
-                return;
-            }
-            $('.button-add-line').attr('disabled', false);
-            view.mA.changeSize(view.mA.sizeX, view.mA.sizeY - 1);
-            view.mC.changeSize(view.mC.sizeX, view.mC.sizeY - 1);
-
-            if (view.mA.sizeY === 2) {
-                $('.button-remove-line').attr('disabled', true);
-            }
-        } else {
-            if (view.mB.sizeY === 2) {
-                return;
-            }
-            $('.button-add-line').attr('disabled', false);
-            view.mB.changeSize(view.mB.sizeX, view.mB.sizeY - 1);
-            if (view.mB.sizeY === 2) {
-                $('.button-remove-line').attr('disabled', true);
-            }
+    var buttonClear = React.createClass({
+        clearMatrix: function() {
+            app.matrixA.clearMatrix();
+            app.matrixB.clearMatrix();
+            app.matrixC.clearMatrix();
+            app.update();
+        },
+        render: function() {
+            return React.createElement(
+                'button',
+                {
+                    className: 'button-clear-matrix',
+                    onClick: this.clearMatrix
+                },
+                React.createElement(
+                    'span',
+                    { className: 'logo-clear'},
+                    'Очистить матрицы'
+                )
+            );
         }
-        view.update();
-        updateInput();
-        updateFocusCell();
+    });
+    var buttonChangePosition = React.createClass({
+        changePosition: function() {
+            var tempMatrix = app.matrixA.clone();
+
+            app.matrixA = app.matrixB.clone();
+            app.matrixB = tempMatrix;
+            app.matrixC.changeSize(app.matrixB.sizeX, app.matrixA.sizeY);
+            app.update();
+        },
+        render: function() {
+            return React.createElement(
+                'button',
+                {
+                    className: 'button-change-position',
+                    onClick: this.changePosition
+                },
+                React.createElement(
+                    'span',
+                    { className: 'logo-replace'},
+                    'Поменять матрицы местами'
+                )
+            );
+        }
+    });
+    var buttonsSelectMatrix = React.createClass({
+        selectMatrixA: function () {
+            app.isCheckedA = true;
+            changeButtonState(app.matrixA);
+            this.setState({});
+        },
+        selectMatrixB: function () {
+            app.isCheckedA = false;
+            changeButtonState(app.matrixB);
+            this.setState({});
+        },
+        render: function() {
+            return React.createElement(
+                'div',
+                { className: 'radio-menu' },
+                React.createElement(
+                    'input',
+                    {
+                        type: 'radio',
+                        name: 'matrix',
+                        id: 'matrix-input-a',
+                        defaultChecked: app.isCheckedA,
+                        onClick: this.selectMatrixA
+                    }
+                ),
+                React.createElement(
+                    'label',
+                    {
+                        className: 'checkbox',
+                        htmlFor: 'matrix-input-a' 
+                    }
+                ),
+                React.createElement(
+                    'label',
+                    {
+                        className: 'name-matrix-radio',
+                        htmlFor: 'matrix-input-a'
+                    },
+                    'Матрица А'
+                ),
+                React.createElement(
+                    'input',
+                    {
+                        type: 'radio',
+                        name: 'matrix',
+                        id: 'matrix-input-b',
+                        defaultChecked: !app.isCheckedA,
+                        onClick: this.selectMatrixB
+                    }
+                ),
+                React.createElement(
+                    'label',
+                    {
+                        className: 'checkbox',
+                        htmlFor: 'matrix-input-b'
+                    }
+                ),
+                React.createElement(
+                    'label',
+                    {
+                        className: 'name-matrix-radio',
+                        htmlFor: 'matrix-input-b'
+                    },
+                    'Матрица Б'
+                )
+            );
+        }
+    });
+    var buttonAddLine = React.createClass({
+        addLine: function() {
+            if ($('#matrix-input-a').prop('checked')) {
+                if (app.matrixA.sizeY === 10) {
+                    return;
+                }
+                $('.button-remove-line').attr('disabled', false);
+                app.matrixA.changeSize(app.matrixA.sizeX, app.matrixA.sizeY + 1);
+                app.matrixC.changeSize(app.matrixC.sizeX, app.matrixC.sizeY + 1);
+                if (app.matrixA.sizeY === 10) {
+                    $('.button-add-line').attr('disabled', true);
+                }
+            } else {
+                $('.button-remove-line').attr('disabled', false);
+                if (app.matrixB.sizeY === 10) {
+                    return;
+                }
+                app.matrixB.changeSize(app.matrixB.sizeX, app.matrixB.sizeY + 1);
+                if (app.matrixB.sizeY === 10) {
+                    $('.button-add-line').attr('disabled', true);
+                }
+            }
+            app.update();
+        },
+        render: function() {
+            return React.createElement(
+                'button',
+                {
+                    className: 'button-add-line',
+                    onClick: this.addLine
+                },
+                React.createElement(
+                    'span',
+                    { className: 'logo-plus'},
+                    'Добавить'
+                )
+            );
+        }
+    });
+    var buttonRemoveLine = React.createClass({
+        removeLine: function() {
+            if ($('#matrix-input-a').prop('checked')) {
+                if (app.matrixA.sizeY === 2) {
+                    return;
+                }
+                    $('.button-add-line').attr('disabled', false);
+                app.matrixA.changeSize(app.matrixA.sizeX, app.matrixA.sizeY - 1);
+                app.matrixC.changeSize(app.matrixC.sizeX, app.matrixC.sizeY - 1);
+
+                if (app.matrixA.sizeY === 2) {
+                    $('.button-remove-line').attr('disabled', true);
+                }
+            } else {
+                if (app.matrixB.sizeY === 2) {
+                    return;
+                }
+               $('.button-add-line').attr('disabled', false);
+               app.matrixB.changeSize(app.matrixB.sizeX, app.matrixB.sizeY - 1);
+               if (app.matrixB.sizeY === 2) {
+                   $('.button-remove-line').attr('disabled', true);
+               }
+            }
+            app.update();
+        },
+        render: function() {
+            return React.createElement(
+                'button',
+                {
+                    className: 'button-remove-line',
+                    disabled: true,
+                    onClick: this.removeLine
+                },
+                React.createElement(
+                    'span',
+                    { className: 'logo-minus'},
+                    'Удалить'
+                )
+            );
+        }
+    });
+    var buttonAddColumn = React.createClass({
+        addColumn: function() {
+            if ($('#matrix-input-a').prop('checked')) {
+                if (app.matrixA.sizeX === 10) {
+                    return;
+                }
+                $('.button-remove-column').attr('disabled', false);
+                app.matrixA.changeSize(app.matrixA.sizeX + 1, app.matrixA.sizeY);
+                 if (app.matrixA.sizeX === 10) {
+                    $('.button-add-column').attr('disabled', true);
+                }
+            } else {
+                if (app.matrixB.sizeX === 10) {
+                    return;
+                }
+                $('.button-remove-column').attr('disabled', false);
+                app.matrixB.changeSize(app.matrixB.sizeX + 1, app.matrixB.sizeY);
+                app.matrixC.changeSize(app.matrixC.sizeX + 1, app.matrixC.sizeY);
+                if (app.matrixB.sizeX === 10) {
+                    $('.button-add-column').attr('disabled', true);
+                }
+            }
+            app.update();
+        },
+        render: function() {
+            return React.createElement(
+                'button',
+                {
+                    className: 'button-add-line',
+                    onClick: this.addColumn
+                },
+                React.createElement(
+                    'span',
+                    { className: 'logo-plus'},
+                    'Добавить'
+                )
+            );
+        }
+    });
+    var buttonRemoveColumn = React.createClass({
+        removeColumn: function() {
+            if ($('#matrix-input-a').prop('checked')) {
+                if (app.matrixA.sizeX === 2) {
+                    return;
+                }
+                $('.button-add-column').attr('disabled', false);
+                app.matrixA.changeSize(app.matrixA.sizeX - 1, app.matrixA.sizeY);
+                if (app.matrixA.sizeX === 2) {
+                    $('.button-remove-column').attr('disabled', true);
+                }
+            } else {
+                if (app.matrixB.sizeX === 2) {
+                    return;
+                }
+                $('.button-add-column').attr('disabled', false);
+                app.matrixB.changeSize(app.matrixB.sizeX - 1, app.matrixB.sizeY);
+                app.matrixC.changeSize(app.matrixC.sizeX - 1, app.matrixC.sizeY);
+                if (app.matrixB.sizeX === 2) {
+                    $('.button-remove-column').attr('disabled', true);
+                }
+            }
+            app.update();
+        },
+        render: function() {
+            return React.createElement(
+                'button',
+                {
+                    className: 'button-remove-column',
+                    disabled: true,
+                    onClick: this.removeColumn
+                },
+                React.createElement(
+                    'span',
+                    { className: 'logo-minus'},
+                    'Удалить'
+                )
+            );
+        }
     });
 
-    $('.button-add-column').on('click', function () {
-        if ($('#matrix-input-a').prop('checked')) {
-            if (view.mA.sizeX === 10) {
-                return;
-            }
-            $('.button-remove-column').attr('disabled', false);
-            view.mA.changeSize(view.mA.sizeX + 1, view.mA.sizeY);
-             if (view.mA.sizeX === 10) {
-                $('.button-add-column').attr('disabled', true);
-            }
-        } else {
-            if (view.mB.sizeX === 10) {
-                return;
-            }
-            $('.button-remove-column').attr('disabled', false);
-            view.mB.changeSize(view.mB.sizeX + 1, view.mB.sizeY);
-            view.mC.changeSize(view.mC.sizeX + 1, view.mC.sizeY);
-            if (view.mB.sizeX === 10) {
-                $('.button-add-column').attr('disabled', true);
-            }
+    ControlPane = React.createClass({
+        render: function() {
+            return React.createElement(
+                'aside',
+                { className: 'control background-gray', id: 'control-pane' },
+                React.createElement(buttonMultiply, { }),
+                React.createElement('div', { className: 'separator-50' }),
+                React.createElement(buttonClear, { }),
+                React.createElement('br', { }),
+                React.createElement(buttonChangePosition, { }),
+                React.createElement('div', { className: 'separator-50' }),
+                React.createElement(buttonsSelectMatrix, { }),
+                React.createElement(buttonAddLine, { }),
+                React.createElement(buttonRemoveLine, { }),
+                React.createElement('br', { }),
+                React.createElement(buttonAddColumn, { }),
+                React.createElement(buttonRemoveColumn, { }),
+                React.createElement('div', { className: 'separator-50' }),
+                React.createElement(
+                    'div',
+                    { className: 'control-error hidden' },
+                    'Такие матрицы нельзя перемножить, так как количество столбцов матрицы А, не равно количевству строк матрицы В.'
+                )
+            );
         }
-        view.update();
-        updateInput();
-        updateFocusCell();
     });
 
-    $('.button-remove-column').on('click', function () {
-        if ($('#matrix-input-a').prop('checked')) {
-            if (view.mA.sizeX === 2) {
-                return;
-            }
-            $('.button-add-column').attr('disabled', false);
-            view.mA.changeSize(view.mA.sizeX - 1, view.mA.sizeY);
-            if (view.mA.sizeX === 2) {
-                $('.button-remove-column').attr('disabled', true);
-            }
-        } else {
-            if (view.mB.sizeX === 2) {
-                return;
-            }
-            $('.button-add-column').attr('disabled', false);
-            view.mB.changeSize(view.mB.sizeX - 1, view.mB.sizeY);
-            view.mC.changeSize(view.mC.sizeX - 1, view.mC.sizeY);
-            if (view.mB.sizeX === 2) {
-                $('.button-remove-column').attr('disabled', true);
-            }
-        }
-        view.update();
-        updateInput();
-        updateFocusCell();
-    });
-    
-    $('#matrix-input-a').on('click', function () {
-        changeButtonState(view.mA);
-    });
-    $('#matrix-input-b').on('click', function () {
-        changeButtonState(view.mB);
-    });
     function changeButtonState(matrix) { 
         switch (matrix.sizeX) {
             case 10: 
@@ -176,40 +365,4 @@
                 $('.button-remove-line').attr('disabled', false);
             }
     };
-    function updateInput() {
-        $('.cell-matrix').on('change', function () {
-            var classList = this.className.split(/\s+/);
-            var re = /cell-(\w+)(\d+)-(\d+)/;
-
-            for (var i = 0; i < classList.length; i++) {
-                if ((matrixName = re.exec(classList[i])) !== null) {
-                    var name = matrixName[1];
-                    var x = Number(matrixName[3]);
-                    var y = Number(matrixName[2]);
-
-                    if (name === view.nameA) {
-                        view.mA.setValue(x, y, this.value);
-                    }
-                    if (name === view.nameB) {
-                        view.mB.setValue(x, y, this.value);
-                    }
-                    if (name === view.nameC) {
-                        view.mC.setValue(x, y, this.value);
-                    }
-                }
-            }
-        });
-    }
-
-    function updateFocusCell() {
-        $('.cell-matrix').on('blur', function () {
-            $('#control-pane').removeClass('control-background-input');
-        });
-
-        $('.cell-matrix').on('focus', function () {
-            $('#control-pane').removeClass('control-background-error')
-                .addClass('control-background-input');
-            $('.control-error').addClass('hidden');
-        });
-    }
 }());

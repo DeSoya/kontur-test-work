@@ -17,15 +17,7 @@ function Matrix(x, y) {
 		}
 	});
 
-	Object.defineProperty(this, 'column', {
-		get: function () {
-			return column;
-		}
-	});
-
 	this.changeSize(x, y);
-
-
 
 	function getValue(x, y) {
 		return column[x][y];
@@ -92,7 +84,7 @@ function Matrix(x, y) {
 		return resultMatrix;
 	};
 
-	this.copy = function () {
+	this.clone = function () {
 		var res = new Matrix(this.sizeX, this.sizeY);
 		for (var x = 0; x < this.sizeX; x++) {
 			for (var y = 0; y < this.sizeY; y ++) {
