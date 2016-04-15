@@ -53,7 +53,7 @@ var Matrix = Object.create(null);
 
     proto.clear = function () {
         var self = this;
-        this.column = this.column.map(function (rows) {
+        this.column = this.column.map(function () {
             return Array(self.sizeY).fill(null);
         });
     };
@@ -88,7 +88,7 @@ var Matrix = Object.create(null);
 
 if (!Array.prototype.fill) {
     Array.prototype.fill = function (value) {
-        if (this == null) {
+        if (this === null) {
             throw new TypeError('this is null or not defined');
         }
 

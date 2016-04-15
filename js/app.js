@@ -1,5 +1,6 @@
 'use strict';
 var app = {};
+
 (function () {
     app.matrixA = new Matrix().setSize(2, 2);
     app.matrixB = new Matrix().setSize(2, 2);
@@ -40,13 +41,13 @@ var app = {};
     app.clearError = function () {
         $('#control-pane').removeClass('control-background-error');
         $('.control-error').addClass('hidden');
-    }
+    };
     app.setFocus = function () {
         $('#control-pane').removeClass('control-background-error')
             .addClass('control-background-input');
         $('.control-error').addClass('hidden');
-    }
+    };
     app.setBlur = function () {
         $('#control-pane').removeClass('control-background-input');
-    }
+    };
 }());

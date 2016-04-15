@@ -11,7 +11,7 @@ var ControlPane;
                 return;
             }
             app.clearError();
-            
+
             app.matrixC = app.matrixA.multiply(app.matrixB);
             app.updateMatrixC();
         },
@@ -95,7 +95,7 @@ var ControlPane;
                 isMatrixAChecked = true;
                 changeButtonState(app.matrixA);
                 this.setState({isCheckedA: true});
-            };
+            }
         },
         selectMatrixB: function () {
             if (this.state.isCheckedA === true) {
@@ -479,5 +479,5 @@ var ControlPane;
                 app.ee.emit('App.buttonAddLine', false);
                 app.ee.emit('App.buttonRemoveLine', false);
         }
-    };
+    }
 }());

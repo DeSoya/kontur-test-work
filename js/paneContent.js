@@ -4,7 +4,6 @@ var ContentPane;
 (function () {
     var InputCell = React.createClass({
         onChangeInput: function (event) {
-            var valueInt = parseInt(event.target.value);
             if (
                 event.target.value <= 10 ||
                 event.target.value === '' ||
@@ -43,7 +42,6 @@ var ContentPane;
         render: function () {
             var matrix = this.props.matrix;
             var name = this.props.name;
-            var curentObject = this;
 
             return React.createElement(
                 'div',
@@ -74,7 +72,7 @@ var ContentPane;
     var MatrixA = React.createClass({
         componentDidMount: function () {
             var self = this;
-            app.ee.addListener('App.changeMatrixA', function (item) {
+            app.ee.addListener('App.changeMatrixA', function () {
                 self.setState({});
             });
         },
@@ -89,7 +87,7 @@ var ContentPane;
     var MatrixB = React.createClass({
         componentDidMount: function () {
             var self = this;
-            app.ee.addListener('App.changeMatrixB', function (item) {
+            app.ee.addListener('App.changeMatrixB', function () {
                 self.setState({});
             });
         },
@@ -104,7 +102,7 @@ var ContentPane;
     var MatrixC = React.createClass({
         componentDidMount: function () {
             var self = this;
-            app.ee.addListener('App.changeMatrixC', function (item) {
+            app.ee.addListener('App.changeMatrixC', function () {
                 self.setState({});
             });
         },
@@ -119,7 +117,7 @@ var ContentPane;
     ContentPane = React.createClass({
         componentDidMount: function () {
             var self = this;
-            app.ee.addListener('App.changeMatrix', function (item) {
+            app.ee.addListener('App.changeMatrix', function () {
                 self.setState({});
             });
         },
