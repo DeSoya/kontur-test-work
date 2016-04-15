@@ -1,41 +1,43 @@
+'use strict';
 var ContentPane;
 
 (function () {
-    window.ee = new EventEmitter();
-
     var InputCell = React.createClass({
-        onChangeInput: function(event) {
-            this.props.matrix.setValue(this.props.x, this.props.y, event.target.value);
-            this.setState({});
+        onChangeInput: function (event) {
+            var valueInt = parseInt(event.target.value);
+            if (
+                event.target.value <= 10 ||
+                event.target.value === '' ||
+                event.target.value === '-'
+                ) {
+                this.props.matrix.setValue(this.props.x, this.props.y, event.target.value);
+                this.setState({});
+            }
         },
 
-        render: function() {
+        render: function () {
             var matrix = this.props.matrix;
             var name = this.props.matrixName;
             var x = this.props.x;
             var y = this.props.y;
             return React.createElement('input', {
-                className: 
-                    'cell-matrix cell-' + name + x + '-' + y +
-                    ' matrix-cell-name-' + name,
+                className: 'cell-matrix',
                 key: name + (x + 1) + ',' + (y + 1),
-                placeholder: name + (x + 1) + ',' + (y + 1),
-                pattern: '\\d+([.,]\\d+)?',
+                placeholder: name + (y + 1) + ',' + (x + 1),
+                pattern: '-?\\d+([.]\\d+)?',
                 disabled: name === 'c',
                 onChange: this.onChangeInput,
-                value: matrix.getValue(x, y),
+                value: matrix.getValue(x, y)
             });
         }
     });
 
     var MatrixView = React.createClass({
-        onFocusInput: function() {
-            $('#control-pane').removeClass('control-background-error')
-                .addClass('control-background-input');
-            $('.control-error').addClass('hidden');
+        onFocusInput: function () {
+            app.setFocus();
         },
-        onBlurInput: function() {
-             $('#control-pane').removeClass('control-background-input');
+        onBlurInput: function () {
+            app.setBlur();
         },
 
         render: function () {
@@ -46,16 +48,17 @@ var ContentPane;
             return React.createElement(
                 'div',
                 {
-                    className: 'matrix__values',
+                    className: 'matrix-values',
                     onFocus: this.onFocusInput,
                     onBlur: this.onBlurInput
                 },
-                    Array(matrix.sizeX).fill('').map(function (col, i) {
+                Array(matrix.sizeX).fill('').map(function (col, i) {
                     return React.createElement(
                         'div',
                         { className: 'column', key: 'column' + name + i},
                         Array(matrix.sizeY).fill('').map(function (row, k) {
                             return React.createElement(InputCell, {
+                                key: name + (i + 1) + ',' + (k + 1),
                                 matrixName: name,
                                 matrix: matrix,
                                 x: i,
@@ -68,15 +71,60 @@ var ContentPane;
         }
     });
 
-    ContentPane = React.createClass({
+    var MatrixA = React.createClass({
         componentDidMount: function () {
             var self = this;
-            window.ee.addListener('App.changeMatrix', function (item) {
+            app.ee.addListener('App.changeMatrixA', function (item) {
                 self.setState({});
             });
         },
         componentWillUnmount: function () {
-            window.ee.removeListener('App.changeMatrix');
+            app.ee.removeListener('App.changeMatrixA');
+        },
+        render: function () {
+            return React.createElement(MatrixView, { matrix: app.matrixA, name: 'a' });
+        }
+    });
+
+    var MatrixB = React.createClass({
+        componentDidMount: function () {
+            var self = this;
+            app.ee.addListener('App.changeMatrixB', function (item) {
+                self.setState({});
+            });
+        },
+        componentWillUnmount: function () {
+            app.ee.removeListener('App.changeMatrixB');
+        },
+        render: function () {
+            return React.createElement(MatrixView, { matrix: app.matrixB, name: 'b' });
+        }
+    });
+
+    var MatrixC = React.createClass({
+        componentDidMount: function () {
+            var self = this;
+            app.ee.addListener('App.changeMatrixC', function (item) {
+                self.setState({});
+            });
+        },
+        componentWillUnmount: function () {
+            app.ee.removeListener('App.changeMatrixC');
+        },
+        render: function () {
+            return React.createElement(MatrixView, { matrix: app.matrixC, name: 'c' });
+        }
+    });
+
+    ContentPane = React.createClass({
+        componentDidMount: function () {
+            var self = this;
+            app.ee.addListener('App.changeMatrix', function (item) {
+                self.setState({});
+            });
+        },
+        componentWillUnmount: function () {
+            app.ee.removeListener('App.changeMatrix');
         },
         render: function () {
             return React.createElement(
@@ -89,15 +137,15 @@ var ContentPane;
                         'div',
                         { className: 'matrix' },
                         React.createElement('div', { className: 'border-left' }),
-                        React.createElement(MatrixView, { matrix: app.matrixC, name: 'c' }),
-                        React.createElement('div', { className: 'border-right', id: 'border-matrix-c' })
+                        React.createElement(MatrixC, {}),
+                        React.createElement('div', { className: 'border-right' })
                     ),
                     React.createElement(
                         'div',
                         { className: 'matrix' },
                         React.createElement('div', { className: 'border-left' }),
-                        React.createElement(MatrixView, { matrix: app.matrixA, name: 'a' }),
-                        React.createElement('div', { className: 'border-right', id: 'border-matrix-c' })
+                        React.createElement(MatrixA, {}),
+                        React.createElement('div', { className: 'border-right' })
                     ),
                     React.createElement(
                         'p',
@@ -106,15 +154,14 @@ var ContentPane;
                     )
                 ),
                 React.createElement(
-                    'div', 
+                    'div',
                     { className: 'bottom-matrix'},
                     React.createElement(
                         'div',
                         { className: 'matrix matrix-c', id: 'matrix-c' },
                         React.createElement('div', { className: 'border-left' }),
-                        React.createElement(MatrixView, { matrix: app.matrixB, name: 'b' }),
-                        React.createElement('div', {
-                            className: 'border-right', id: 'border-matrix-c' }),
+                        React.createElement(MatrixB, {}),
+                        React.createElement('div', { className: 'border-right' }),
                         React.createElement('div', { className: 'separator' }),
                         React.createElement(
                             'p',

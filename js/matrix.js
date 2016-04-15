@@ -1,129 +1,120 @@
-function Matrix(x, y) {
-	var column = [[null]];
-	var sizeX = 1;
-	var sizeY = 1;
-	this.setValue = setValue;
-	this.getValue = getValue;
-	this.changeSize = changeSize;
+'use strict';
+var Matrix = Object.create(null);
 
-	Object.defineProperty(this, 'sizeX', {
-		get: function () {
-			return sizeX;
-		}
-	});
-	Object.defineProperty(this, 'sizeY', {
-		get: function () {
-			return sizeY;
-		}
-	});
+(function () {
+    Matrix = function () {
+        this.column = [[null]];
+        this.sizeX = 1;
+        this.sizeY = 1;
+    };
 
-	this.changeSize(x, y);
+    var proto = Matrix.prototype;
+    proto.getValue = function (x, y) {
+        return this.column[x][y];
+    };
 
-	function getValue(x, y) {
-		return column[x][y];
-	};
+    proto.setValue = function (x, y, value) {
+        if (x > this.sizeX - 1 || x < 0 || y > this.sizeY - 1 || y < 0) {
+            return;
+        }
+        if (!Array.isArray(this.column[x])) {
+            this.column[x] = [];
+        }
+        this.column[x][y] = value;
+    };
+    proto.setSize = function (x, y) {
+        if (x < 1 || y < 1) {
+            return;
+        }
+        if (x > this.sizeX) {
+            var emptyRow = Array(this.sizeY).fill(null);
+            var emptyColumns = Array(x - this.sizeX).fill(emptyRow);
+            this.column = this.column.concat(emptyColumns);
+        }
+        if (y > this.sizeY) {
+            var emptyCol = Array(y - this.sizeY).fill(null);
+            this.column = this.column.map(function (col) {
+                return col.concat(emptyCol);
+            });
+        }
+        if (x < this.sizeX) {
+            this.column.length = x;
+        }
+        if (y < this.sizeY) {
+            this.column = this.column.map(function (col) {
+                col.length = y;
+                return col;
+            });
+        }
+        this.sizeX = x;
+        this.sizeY = y;
+        return this;
+    };
 
-	function setValue(x, y, value) {
-		if (x > sizeX - 1 || x < 0 || y > sizeY - 1 || y < 0) {
-			return;
-		}
-		if (!Array.isArray(column[x])) {
-			column[x] = [];
-		}
-		column[x][y] = value;
-	};
-	function changeSize(x, y) {
-		if (x < 1 || y < 1) {
-			return;
-		}
-		if (x > sizeX) {
-			var emptyRow = Array(sizeY).fill(null);
-			var emptyColumns = Array(x - sizeX).fill(emptyRow);
+    proto.clear = function () {
+        var self = this;
+        this.column = this.column.map(function (rows) {
+            return Array(self.sizeY).fill(null);
+        });
+    };
 
-			column = column.concat(emptyColumns);
-		}
-		if (y > sizeY) {
-			var emptyCol = Array(y - sizeY).fill(null);
-			column = column.map(function (col) {
-				return col.concat(emptyCol);
-			});
-		}
-		if (x < sizeX) {
-			column.length = x;
-		}
-		if (y < sizeY) {
-			column = column.map(function (col) {
-				col.length = y;
-				return col;
-			});
-		}
-		sizeX = x;
-		sizeY = y;
-	};
+    proto.multiply = function (matrix) {
+        if (this.sizeX !== matrix.sizeY) {
+            return;
+        }
 
-	this.clearMatrix = function () {
-		column = column.map(function (rows) {
-			return Array(sizeY).fill(null);
-		});
-	};
+        var resultMatrix = new Matrix().setSize(matrix.sizeX, this.sizeY);
+        for (var cx = 0; cx < matrix.sizeX; cx++) {
+            for (var cy = 0; cy < this.sizeY; cy++) {
+                for (var ax = 0; ax < this.sizeX; ax++) {
+                    resultMatrix.setValue(cx, cy, Number(resultMatrix.getValue(cx, cy)) +
+                        this.getValue(ax, cy) * matrix.getValue(cx, ax));
+                }
+            }
+        }
+        return resultMatrix;
+    };
 
-	this.multiplication = function (matrixB) {
-		if (sizeX !== matrixB.sizeY) {
-			return false;
-		}
+    proto.clone = function () {
+        var res = new Matrix().setSize(this.sizeX, this.sizeY);
 
-		var resultMatrix = new Matrix(matrixB.sizeX, sizeY);
-		for (var cx = 0; cx < matrixB.sizeX; cx++) {
-			for (var cy = 0; cy < sizeY; cy ++) {
-				for (var ax = 0; ax < sizeX; ax ++) {
-					resultMatrix.setValue(cx, cy, Number(resultMatrix.getValue(cx, cy)) +
-						this.getValue(ax, cy) * matrixB.getValue(cx, ax));
-				}
-			}
-		}
-		return resultMatrix;
-	};
+        for (var x = 0; x < this.sizeX; x++) {
+            res.column[x] = this.column[x].slice();
+        }
+        return res;
+    };
+}());
 
-	this.clone = function () {
-		var res = new Matrix(this.sizeX, this.sizeY);
-		for (var x = 0; x < this.sizeX; x++) {
-			for (var y = 0; y < this.sizeY; y ++) {
-				res.setValue(x, y, this.getValue(x, y));
-			}
-		}
-		return res;
-	};
-}
 
 if (!Array.prototype.fill) {
-	Array.prototype.fill = function (value) {
-		if (this == null) {
-			throw new TypeError('this is null or not defined');
-		}
+    Array.prototype.fill = function (value) {
+        if (this == null) {
+            throw new TypeError('this is null or not defined');
+        }
 
-		var O = Object(this);
-		var len = O.length >>> 0;
+        var O = Object(this);
+        var len = O.length >>> 0;
 
-		var start = arguments[1];
-		var relativeStart = start >> 0;
+        var start = arguments[1];
+        var relativeStart = start >> 0;
 
-		var k = relativeStart < 0 ?
-		Math.max(len + relativeStart, 0) :
-		Math.min(relativeStart, len);
+        var k = relativeStart < 0 ?
+        Math.max(len + relativeStart, 0) :
+        Math.min(relativeStart, len);
 
-		var end = arguments[2];
-		var relativeEnd = end === undefined ?
-		len : end >> 0;
+        var end = arguments[2];
+        var relativeEnd = end === undefined ?
+        len : end >> 0;
 
-		var final = relativeEnd < 0 ?
-		Math.max(len + relativeEnd, 0) :
-		Math.min(relativeEnd, len);
+        var final = relativeEnd < 0 ?
+        Math.max(len + relativeEnd, 0) :
+        Math.min(relativeEnd, len);
 
-		while (k < final) {
-			O[k] = value;
-			k++;
-		}
+        while (k < final) {
+            O[k] = value;
+            k++;
+        }
 
-		return O;
-	};
+        return O;
+    };
 }

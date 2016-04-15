@@ -21,24 +21,31 @@ body
     width: 300px;
     padding: 30px;
     background-color: #bcbcbc;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 80px);
 }
-button
+.countrol-button
 {
     background: linear-gradient(to top, #ececec, #fdfdfd);
     border: 1px solid rgba(0, 0, 0, .4);
     border-bottom: 1px solid rgba(0, 0, 0, .6);
     border-radius: 2px;
     height: 28px;
-    margin: 5px 5px 5px 0;
+    margin: 5px 10px 5px 0;
     font: 14px "Segoe Ui";
     line-height: 5px;
 }
-.button-multiplication
+.container-button-multiply
+{
+    display: flex;
+    height: 40px;
+}
+
+.button-multiply
 {
     background-color: #38920c;
     background: linear-gradient(to top, #38920c, #4ba91d);
     border: 2px solid #5c823d;
+    margin-right: 0;
     padding: 10px;
     padding-left: 20px;
     height: 40px;
@@ -47,47 +54,49 @@ button
     border-radius: 2px 0 0 2px;
     border-bottom: 2px solid #43672c;
     border-right: none;
+    outline:none;
 }
 
-.angle
+.angle-multiply-button
 {
     display: inline-block;
     height: 40px;
     width: 12px;
-    margin: 0 0 -13px -5px;
+    margin: 0 0 -12px 0;
     background-image: url(image/angle.png);
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: -1px 0;  
+    background-position: -1px 0;
 }
 
-button:focus + .angle
+.button-multiply:focus + .angle-multiply-button
 {
     background-position: -14px 0;  
 }
-button:hover + .angle
+.button-multiply:hover + .angle-multiply-button
 {
     background-position: -28px 0;  
 }
-button:focus:hover + .angle
+.button-multiply:focus:hover + .angle-multiply-button
 {
-    background-position: -54px 0;  
+    background-position: -54px 0;
 }
-button:active + .angle
+.button-multiply:focus:active + .angle-multiply-button
 {
-    background-position: -41px 0 !important;  
+    background-position: -41px 0;
 }
-button:focus
+
+.countrol-button:focus
 {
     border: 1px solid rgba(0, 0, 0, .4);
     box-shadow: inset 0 1px 0 #fff;
     box-shadow: 1px 0px #5199db, -1px 0px #5199db, 0px 1px #5199db, 0px -1px #5199db;
 }
-button:hover
+.countrol-button:hover
 {
     background: linear-gradient(to top, #dfdfdf, #f2f2f2);
 }
-button:active
+.countrol-button:active
 {
     background: linear-gradient(to top, #d9d9d9, #d9d9d9);
     border-left: 1px solid rgba(0, 0, 0, .4);
@@ -96,21 +105,24 @@ button:active
     border-top: 1px solid rgba(0, 0, 0, .7);
     box-shadow: inset 0 1px 3px #a6a6a6;
 }
-.button-multiplication:focus
+.button-multiply:focus
 {
     border: 2px solid #5199db;
+    box-shadow: inset 1px 1px 0 #fff,
+        inset -0 -1px 0 #fff;
     border-right: none;
 }
-.button-multiplication:hover
+.button-multiply:hover
 {
     background: linear-gradient(to top, #317e0b, #3b8d13);
 }
-.button-multiplication:active
+.button-multiply:active
 {
     background: #35840e;
     border-left: 2px solid rgba(0, 0, 0, .4);
     border-bottom: 2px solid rgba(0, 0, 0, .4);
     border-top: 2px solid rgba(0, 0, 0, .55);
+    border-right: 0;
     box-shadow: inset 0 1px 0 #255c09;
 }
 
@@ -143,7 +155,7 @@ input[type="radio"] + label::before
 {
     height: 18px;
     width: 18px;
-    margin: 5px;
+    margin: 7px 5px 5px 0;
 }
 input[type="radio"]:hover + label::before
 {
@@ -182,6 +194,7 @@ input[type="radio"]:checked + label::before
 .name-matrix-radio
 {
     height: 24px;
+    margin-right: 10px;
 }
 .control-background-error
 {
@@ -198,7 +211,7 @@ input[type="radio"]:checked + label::before
 
 .main-form
 {
-
+    display: inline-block;
 }
 .top-matrix
 {
@@ -212,10 +225,6 @@ input[type="radio"]:checked + label::before
 {
     display: inline-block;
     padding: 20px;
-}
-#main-form
-{
-    display: inline-block;
 }
 .matrix
 {
@@ -232,7 +241,7 @@ input[type="radio"]:checked + label::before
 {
     margin-left: 5px;
 }
-.matrix__values
+.matrix-values
 {
     display: flex;
     flex-direction: row;
@@ -252,11 +261,17 @@ input[type="radio"]:checked + label::before
 
     width: 40px;
     height: 26px;
-    margin: 10px 10px 10px 0; 
+    margin: 10px 10px 10px 0px; 
+    border: 1px solid #bbb;
+    border-top: 1px solid #999;
 }
 .cell-matrix:focus
 {
-    border: 2px solid #5199db;
+    border: 1px solid #5199db;
+    box-shadow: 1px 1px #5199db,
+        -1px 1px #5199db,
+        -1px -1px #5199db,
+        1px -1px #5199db;
 }
 
 .border-left

@@ -1,53 +1,53 @@
+'use strict';
 var ControlPane;
 
 (function () {
+    var isMatrixAChecked = true;
+
     var buttonMultiply = React.createClass({
-        multiplyMatrix: function() {
+        multiplyMatrix: function () {
             if (app.matrixA.sizeX !== app.matrixB.sizeY) {
-            $('#control-pane').removeClass('control-background-input')
-                .addClass('control-background-error');
-            $('.control-error').removeClass('hidden');
-            return;
-        }
-        $('#control-pane').removeClass('control-background-error');
-        $('.control-error').addClass('hidden');
-
-        app.matrixC = app.matrixA.multiplication(app.matrixB);
-        // window.ee.emit('App.changeMatrix', {});
-
-        app.update();
+                app.setError();
+                return;
+            }
+            app.clearError();
+            
+            app.matrixC = app.matrixA.multiply(app.matrixB);
+            app.updateMatrixC();
         },
 
-        render: function() {
+        render: function () {
             return React.createElement(
                 'div',
-                {},
+                { className: 'container-button-multiply'},
                 React.createElement(
                     'button',
-                    { 
-                        className: 'button-multiplication',
+                    {
+                        className: 'button-multiply',
                         onClick: this.multiplyMatrix },
                     'Умножить матрицы'
                 ),
                 React.createElement(
                     'div',
-                    { className: 'angle'}
+                    { className: 'angle-multiply-button'}
                 )
             );
         }
     });
     var buttonClear = React.createClass({
-        clearMatrix: function() {
-            app.matrixA.clearMatrix();
-            app.matrixB.clearMatrix();
-            app.matrixC.clearMatrix();
-            app.update();
+        clearMatrix: function () {
+            app.matrixA.clear();
+            app.matrixB.clear();
+            app.matrixC.clear();
+            app.updateMatrixC();
+            app.updateMatrixA();
+            app.updateMatrixB();
         },
-        render: function() {
+        render: function () {
             return React.createElement(
                 'button',
                 {
-                    className: 'button-clear-matrix',
+                    className: 'button-clear-matrix countrol-button',
                     onClick: this.clearMatrix
                 },
                 React.createElement(
@@ -59,19 +59,21 @@ var ControlPane;
         }
     });
     var buttonChangePosition = React.createClass({
-        changePosition: function() {
+        changePosition: function () {
             var tempMatrix = app.matrixA.clone();
 
             app.matrixA = app.matrixB.clone();
             app.matrixB = tempMatrix;
-            app.matrixC.changeSize(app.matrixB.sizeX, app.matrixA.sizeY);
-            app.update();
+            app.matrixC.setSize(app.matrixB.sizeX, app.matrixA.sizeY);
+            app.updateMatrixC();
+            app.updateMatrixA();
+            app.updateMatrixB();
         },
-        render: function() {
+        render: function () {
             return React.createElement(
                 'button',
                 {
-                    className: 'button-change-position',
+                    className: 'button-change-position countrol-button',
                     onClick: this.changePosition
                 },
                 React.createElement(
@@ -83,17 +85,26 @@ var ControlPane;
         }
     });
     var buttonsSelectMatrix = React.createClass({
+        getInitialState: function () {
+            return {
+                isCheckedA: true
+            };
+        },
         selectMatrixA: function () {
-            app.isCheckedA = true;
-            changeButtonState(app.matrixA);
-            this.setState({});
+            if (this.state.isCheckedA === false) {
+                isMatrixAChecked = true;
+                changeButtonState(app.matrixA);
+                this.setState({isCheckedA: true});
+            };
         },
         selectMatrixB: function () {
-            app.isCheckedA = false;
-            changeButtonState(app.matrixB);
-            this.setState({});
+            if (this.state.isCheckedA === true) {
+                isMatrixAChecked = false;
+                changeButtonState(app.matrixB);
+                this.setState({isCheckedA: false});
+            }
         },
-        render: function() {
+        render: function () {
             return React.createElement(
                 'div',
                 { className: 'radio-menu' },
@@ -103,7 +114,7 @@ var ControlPane;
                         type: 'radio',
                         name: 'matrix',
                         id: 'matrix-input-a',
-                        defaultChecked: app.isCheckedA,
+                        defaultChecked: isMatrixAChecked,
                         onClick: this.selectMatrixA
                     }
                 ),
@@ -111,7 +122,7 @@ var ControlPane;
                     'label',
                     {
                         className: 'checkbox',
-                        htmlFor: 'matrix-input-a' 
+                        htmlFor: 'matrix-input-a'
                     }
                 ),
                 React.createElement(
@@ -128,7 +139,7 @@ var ControlPane;
                         type: 'radio',
                         name: 'matrix',
                         id: 'matrix-input-b',
-                        defaultChecked: !app.isCheckedA,
+                        defaultChecked: !isMatrixAChecked,
                         onClick: this.selectMatrixB
                     }
                 ),
@@ -151,34 +162,59 @@ var ControlPane;
         }
     });
     var buttonAddLine = React.createClass({
-        addLine: function() {
-            if ($('#matrix-input-a').prop('checked')) {
+        getInitialState: function () {
+            return {
+                disabled: false
+            };
+        },
+        componentDidMount: function () {
+            var self = this;
+            app.ee.addListener('App.buttonAddLine', function (isDisabled) {
+                if (self.state.disabled !== isDisabled) {
+                    self.setState({disabled: isDisabled});
+                }
+            });
+        },
+        componentWillUnmount: function () {
+            app.ee.removeListener('App.buttonAddLine');
+        },
+        addLine: function () {
+            if (isMatrixAChecked) {
                 if (app.matrixA.sizeY === 10) {
                     return;
                 }
-                $('.button-remove-line').attr('disabled', false);
-                app.matrixA.changeSize(app.matrixA.sizeX, app.matrixA.sizeY + 1);
-                app.matrixC.changeSize(app.matrixC.sizeX, app.matrixC.sizeY + 1);
-                if (app.matrixA.sizeY === 10) {
-                    $('.button-add-line').attr('disabled', true);
+                if (app.matrixA.sizeY === 2) {
+                    app.ee.emit('App.buttonRemoveLine', false);
                 }
+
+                app.matrixA.setSize(app.matrixA.sizeX, app.matrixA.sizeY + 1);
+                app.matrixC.setSize(app.matrixC.sizeX, app.matrixC.sizeY + 1);
+                if (app.matrixA.sizeY === 10) {
+                    this.setState({disabled: true});
+                }
+                app.updateMatrixC();
+                app.updateMatrixA();
             } else {
-                $('.button-remove-line').attr('disabled', false);
                 if (app.matrixB.sizeY === 10) {
                     return;
                 }
-                app.matrixB.changeSize(app.matrixB.sizeX, app.matrixB.sizeY + 1);
+                if (app.matrixB.sizeY === 2) {
+                    app.ee.emit('App.buttonRemoveLine', false);
+                }
+                app.matrixB.setSize(app.matrixB.sizeX, app.matrixB.sizeY + 1);
+                app.updateMatrixB();
+
                 if (app.matrixB.sizeY === 10) {
-                    $('.button-add-line').attr('disabled', true);
+                    this.setState({disabled: true});
                 }
             }
-            app.update();
         },
-        render: function() {
+        render: function () {
             return React.createElement(
                 'button',
                 {
-                    className: 'button-add-line',
+                    className: 'button-add-line countrol-button',
+                    disabled: this.state.disabled,
                     onClick: this.addLine
                 },
                 React.createElement(
@@ -190,36 +226,59 @@ var ControlPane;
         }
     });
     var buttonRemoveLine = React.createClass({
-        removeLine: function() {
-            if ($('#matrix-input-a').prop('checked')) {
+        getInitialState: function () {
+            return {
+                disabled: true
+            };
+        },
+        componentDidMount: function () {
+            var self = this;
+            app.ee.addListener('App.buttonRemoveLine', function (isDisabled) {
+                if (self.state.disabled !== isDisabled) {
+                    self.setState({disabled: isDisabled});
+                }
+            });
+        },
+        componentWillUnmount: function () {
+            app.ee.removeListener('App.buttonRemoveLine');
+        },
+        removeLine: function () {
+            if (isMatrixAChecked) {
                 if (app.matrixA.sizeY === 2) {
                     return;
                 }
-                    $('.button-add-line').attr('disabled', false);
-                app.matrixA.changeSize(app.matrixA.sizeX, app.matrixA.sizeY - 1);
-                app.matrixC.changeSize(app.matrixC.sizeX, app.matrixC.sizeY - 1);
+                if (app.matrixA.sizeY === 10) {
+                    app.ee.emit('App.buttonAddLine', false);
+                }
+                app.matrixA.setSize(app.matrixA.sizeX, app.matrixA.sizeY - 1);
+                app.matrixC.setSize(app.matrixC.sizeX, app.matrixC.sizeY - 1);
+                app.updateMatrixC();
+                app.updateMatrixA();
 
                 if (app.matrixA.sizeY === 2) {
-                    $('.button-remove-line').attr('disabled', true);
+                    this.setState({disabled: true});
                 }
             } else {
                 if (app.matrixB.sizeY === 2) {
                     return;
                 }
-               $('.button-add-line').attr('disabled', false);
-               app.matrixB.changeSize(app.matrixB.sizeX, app.matrixB.sizeY - 1);
-               if (app.matrixB.sizeY === 2) {
-                   $('.button-remove-line').attr('disabled', true);
-               }
+                if (app.matrixB.sizeY === 10) {
+                    app.ee.emit('App.buttonAddLine', false);
+                }
+                app.matrixB.setSize(app.matrixB.sizeX, app.matrixB.sizeY - 1);
+                app.updateMatrixB();
+
+                if (app.matrixB.sizeY === 2) {
+                    this.setState({disabled: true});
+                }
             }
-            app.update();
         },
-        render: function() {
+        render: function () {
             return React.createElement(
                 'button',
                 {
-                    className: 'button-remove-line',
-                    disabled: true,
+                    className: 'button-remove-line countrol-button',
+                    disabled: this.state.disabled,
                     onClick: this.removeLine
                 },
                 React.createElement(
@@ -231,34 +290,61 @@ var ControlPane;
         }
     });
     var buttonAddColumn = React.createClass({
-        addColumn: function() {
-            if ($('#matrix-input-a').prop('checked')) {
+        getInitialState: function () {
+            return {
+                disabled: false
+            };
+        },
+        componentDidMount: function () {
+            var self = this;
+            app.ee.addListener('App.buttonAddColumn', function (isDisabled) {
+                if (self.state.disabled !== isDisabled) {
+                    self.setState({disabled: isDisabled});
+                }
+            });
+        },
+        componentWillUnmount: function () {
+            app.ee.removeListener('App.buttonAddColumn');
+        },
+        addColumn: function () {
+            if (isMatrixAChecked) {
                 if (app.matrixA.sizeX === 10) {
                     return;
                 }
-                $('.button-remove-column').attr('disabled', false);
-                app.matrixA.changeSize(app.matrixA.sizeX + 1, app.matrixA.sizeY);
-                 if (app.matrixA.sizeX === 10) {
-                    $('.button-add-column').attr('disabled', true);
+                if (app.matrixA.sizeX === 2) {
+                    app.ee.emit('App.buttonRemoveColumn', false);
+                }
+
+                app.matrixA.setSize(app.matrixA.sizeX + 1, app.matrixA.sizeY);
+                app.updateMatrixA();
+
+                if (app.matrixA.sizeX === 10) {
+                    this.setState({disabled: true});
                 }
             } else {
                 if (app.matrixB.sizeX === 10) {
                     return;
                 }
-                $('.button-remove-column').attr('disabled', false);
-                app.matrixB.changeSize(app.matrixB.sizeX + 1, app.matrixB.sizeY);
-                app.matrixC.changeSize(app.matrixC.sizeX + 1, app.matrixC.sizeY);
+                if (app.matrixB.sizeX === 2) {
+                    app.ee.emit('App.buttonRemoveColumn', false);
+                }
+
+                app.matrixB.setSize(app.matrixB.sizeX + 1, app.matrixB.sizeY);
+                app.matrixC.setSize(app.matrixC.sizeX + 1, app.matrixC.sizeY);
+                app.updateMatrixC();
+                app.updateMatrixB();
+
                 if (app.matrixB.sizeX === 10) {
-                    $('.button-add-column').attr('disabled', true);
+                    this.setState({disabled: true});
                 }
             }
-            app.update();
         },
-        render: function() {
+        render: function () {
             return React.createElement(
                 'button',
                 {
-                    className: 'button-add-line',
+                    className: 'button-add-line countrol-button',
+                    disabled: this.state.disabled,
                     onClick: this.addColumn
                 },
                 React.createElement(
@@ -270,35 +356,61 @@ var ControlPane;
         }
     });
     var buttonRemoveColumn = React.createClass({
-        removeColumn: function() {
-            if ($('#matrix-input-a').prop('checked')) {
+        getInitialState: function () {
+            return {
+                disabled: true
+            };
+        },
+        componentDidMount: function () {
+            var self = this;
+            app.ee.addListener('App.buttonRemoveColumn', function (isDisabled) {
+                if (self.state.disabled !== isDisabled) {
+                    self.setState({disabled: isDisabled});
+                }
+            });
+        },
+        componentWillUnmount: function () {
+            app.ee.removeListener('App.buttonRemoveColumn');
+        },
+        removeColumn: function () {
+            if (isMatrixAChecked) {
                 if (app.matrixA.sizeX === 2) {
                     return;
                 }
-                $('.button-add-column').attr('disabled', false);
-                app.matrixA.changeSize(app.matrixA.sizeX - 1, app.matrixA.sizeY);
+                if (app.matrixA.sizeX === 10) {
+                    app.ee.emit('App.buttonAddColumn', false);
+                }
+
+                app.matrixA.setSize(app.matrixA.sizeX - 1, app.matrixA.sizeY);
+                app.updateMatrixA();
+
                 if (app.matrixA.sizeX === 2) {
-                    $('.button-remove-column').attr('disabled', true);
+                    this.setState({disabled: true});
                 }
             } else {
                 if (app.matrixB.sizeX === 2) {
                     return;
                 }
-                $('.button-add-column').attr('disabled', false);
-                app.matrixB.changeSize(app.matrixB.sizeX - 1, app.matrixB.sizeY);
-                app.matrixC.changeSize(app.matrixC.sizeX - 1, app.matrixC.sizeY);
+                if (app.matrixB.sizeX === 10) {
+                    app.ee.emit('App.buttonAddColumn', false);
+                }
+
+                app.matrixB.setSize(app.matrixB.sizeX - 1, app.matrixB.sizeY);
+                app.matrixC.setSize(app.matrixC.sizeX - 1, app.matrixC.sizeY);
+                app.updateMatrixC();
+                app.updateMatrixB();
+
                 if (app.matrixB.sizeX === 2) {
-                    $('.button-remove-column').attr('disabled', true);
+                    this.setState({disabled: true});
                 }
             }
-            app.update();
         },
-        render: function() {
+        render: function () {
             return React.createElement(
                 'button',
                 {
-                    className: 'button-remove-column',
-                    disabled: true,
+                    className: 'button-remove-column countrol-button',
+                    disabled: this.state.disabled,
                     onClick: this.removeColumn
                 },
                 React.createElement(
@@ -311,7 +423,7 @@ var ControlPane;
     });
 
     ControlPane = React.createClass({
-        render: function() {
+        render: function () {
             return React.createElement(
                 'aside',
                 { className: 'control background-gray', id: 'control-pane' },
@@ -324,45 +436,48 @@ var ControlPane;
                 React.createElement(buttonsSelectMatrix, { }),
                 React.createElement(buttonAddLine, { }),
                 React.createElement(buttonRemoveLine, { }),
+                React.createElement('span', {}, 'строку'),
                 React.createElement('br', { }),
                 React.createElement(buttonAddColumn, { }),
                 React.createElement(buttonRemoveColumn, { }),
+                React.createElement('span', {}, 'столбец'),
                 React.createElement('div', { className: 'separator-50' }),
                 React.createElement(
                     'div',
                     { className: 'control-error hidden' },
-                    'Такие матрицы нельзя перемножить, так как количество столбцов матрицы А, не равно количевству строк матрицы В.'
+                    'Такие матрицы нельзя перемножить, так как количество столбцов матрицы А, ' +
+                    'не равно количевству строк матрицы В.'
                 )
             );
         }
     });
 
-    function changeButtonState(matrix) { 
+    function changeButtonState(matrix) {
         switch (matrix.sizeX) {
-            case 10: 
-                $('.button-add-column').attr('disabled', true);
-                $('.button-remove-column').attr('disabled', false);
+            case 10:
+                app.ee.emit('App.buttonAddColumn', true);
+                app.ee.emit('App.buttonRemoveColumn', false);
                 break;
             case 2:
-                $('.button-add-column').attr('disabled', false);
-                $('.button-remove-column').attr('disabled', true);
+                app.ee.emit('App.buttonAddColumn', false);
+                app.ee.emit('App.buttonRemoveColumn', true);
                 break;
             default:
-                $('.button-add-column').attr('disabled', false);
-                $('.button-remove-column').attr('disabled', false);
+                app.ee.emit('App.buttonAddColumn', false);
+                app.ee.emit('App.buttonRemoveColumn', false);
         }
         switch (matrix.sizeY) {
             case 10:
-                $('.button-add-line').attr('disabled', true);
-                $('.button-remove-line').attr('disabled', false);
+                app.ee.emit('App.buttonAddLine', true);
+                app.ee.emit('App.buttonRemoveLine', false);
                 break;
             case 2:
-                $('.button-add-line').attr('disabled', false);
-                $('.button-remove-line').attr('disabled', true);
+                app.ee.emit('App.buttonAddLine', false);
+                app.ee.emit('App.buttonRemoveLine', true);
                 break;
             default:
-                $('.button-add-line').attr('disabled', false);
-                $('.button-remove-line').attr('disabled', false);
-            }
+                app.ee.emit('App.buttonAddLine', false);
+                app.ee.emit('App.buttonRemoveLine', false);
+        }
     };
 }());
