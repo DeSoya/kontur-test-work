@@ -11,122 +11,41 @@ body
     font: 14px "Segoe Ui";
     color: #404040;
     line-height: 20px;
-    min-width: 800px;
+    min-width: 1600px;
 }
+
 .control
 {
+    display: inline-block;
+    vertical-align: top;
     width: 300px;
     padding: 30px;
     background-color: #bcbcbc;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 80px);
 }
-.main-form
-{
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    padding-left: 20px;
-    padding-top: 5px;
-}
-.radio-menu
-{
-    display: flex;
-    flex-flow: row nowrap;
-    height: 20px;
-    align-items: center;
-}
-
-.matrix-b,
-.matrix-c,
-.matrix-a
-{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: stretch;
-    justify-content: center;
-    margin: 10px;
-}
-
-.cell-matrix
-{
-    display: block;
-    text-align: center;
-
-    width: 40px;
-    height: 40px;
-    margin: 10px 10px 10px 0;
-}
-.cell-matrix:focus
-{
-    border: 2px solid #5199db;
-}
-
-.border-left
-{
-    width: 10px;
-    border-left: 2px solid #000;
-    border-top: 2px solid #000;
-    border-bottom: 2px solid #000;
-}
-.border-right
-{
-    width: 10px;
-    margin-left: -10px;
-    border-right: 2px solid #000;
-    border-top: 2px solid #000;
-    border-bottom: 2px solid #000;
-}
-.name-matrix
-{
-    font-size: 18px;
-    font-weight: bold;
-}
-.name-matrix-radio
-{
-    height: 24px;
-}
-.control-background-error
-{
-    background-color: #f6c1c0;
-}
-.control-background-input
-{
-    background-color: #5199db;
-}
-.separator
-{
-    width: 100%;
-}
-.separator-10
-{
-    width: 100%;
-    height: 10px;
-}
-.separator-50
-{
-    width: 100%;
-    height: 50px;
-}
-.hidden
-{
-    display: none;
-}
-button
+.countrol-button
 {
     background: linear-gradient(to top, #ececec, #fdfdfd);
     border: 1px solid rgba(0, 0, 0, .4);
     border-bottom: 1px solid rgba(0, 0, 0, .6);
     border-radius: 2px;
     height: 28px;
-    margin: 5px 5px 5px 0;
+    margin: 5px 10px 5px 0;
     font: 14px "Segoe Ui";
     line-height: 5px;
 }
-.button-multiplication
+.container-button-multiply
 {
+    display: flex;
+    height: 40px;
+}
+
+.button-multiply
+{
+    background-color: #38920c;
     background: linear-gradient(to top, #38920c, #4ba91d);
     border: 2px solid #5c823d;
+    margin-right: 0;
     padding: 10px;
     padding-left: 20px;
     height: 40px;
@@ -135,48 +54,49 @@ button
     border-radius: 2px 0 0 2px;
     border-bottom: 2px solid #43672c;
     border-right: none;
+    outline:none;
 }
 
-
-.angle
+.angle-multiply-button
 {
     display: inline-block;
     height: 40px;
     width: 12px;
-    margin: 0 0 -13px -5px;
+    margin: 0 0 -12px 0;
     background-image: url(image/angle.png);
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: -1px 0;  
+    background-position: -1px 0;
 }
 
-button:focus + .angle
+.button-multiply:focus + .angle-multiply-button
 {
     background-position: -14px 0;  
 }
-button:hover + .angle
+.button-multiply:hover + .angle-multiply-button
 {
     background-position: -28px 0;  
 }
-button:focus:hover + .angle
+.button-multiply:focus:hover + .angle-multiply-button
 {
-    background-position: -54px 0;  
+    background-position: -54px 0;
 }
-button:active + .angle
+.button-multiply:focus:active + .angle-multiply-button
 {
-    background-position: -41px 0 !important;  
+    background-position: -41px 0;
 }
-button:focus
+
+.countrol-button:focus
 {
     border: 1px solid rgba(0, 0, 0, .4);
     box-shadow: inset 0 1px 0 #fff;
     box-shadow: 1px 0px #5199db, -1px 0px #5199db, 0px 1px #5199db, 0px -1px #5199db;
 }
-button:hover
+.countrol-button:hover
 {
     background: linear-gradient(to top, #dfdfdf, #f2f2f2);
 }
-button:active
+.countrol-button:active
 {
     background: linear-gradient(to top, #d9d9d9, #d9d9d9);
     border-left: 1px solid rgba(0, 0, 0, .4);
@@ -185,23 +105,35 @@ button:active
     border-top: 1px solid rgba(0, 0, 0, .7);
     box-shadow: inset 0 1px 3px #a6a6a6;
 }
-.button-multiplication:focus
+.button-multiply:focus
 {
     border: 2px solid #5199db;
+    box-shadow: inset 1px 1px 0 #fff,
+        inset -0 -1px 0 #fff;
     border-right: none;
 }
-.button-multiplication:hover
+.button-multiply:hover
 {
     background: linear-gradient(to top, #317e0b, #3b8d13);
 }
-.button-multiplication:active
+.button-multiply:active
 {
     background: #35840e;
     border-left: 2px solid rgba(0, 0, 0, .4);
     border-bottom: 2px solid rgba(0, 0, 0, .4);
     border-top: 2px solid rgba(0, 0, 0, .55);
+    border-right: 0;
     box-shadow: inset 0 1px 0 #255c09;
 }
+
+.radio-menu
+{
+    display: flex;
+    flex-flow: row nowrap;
+    height: 20px;
+    align-items: center;
+}
+
 input[type="radio"]
 {
     position: absolute;
@@ -223,7 +155,7 @@ input[type="radio"] + label::before
 {
     height: 18px;
     width: 18px;
-    margin: 5px;
+    margin: 7px 5px 5px 0;
 }
 input[type="radio"]:hover + label::before
 {
@@ -233,7 +165,6 @@ input[type="radio"]:checked + label::before
 {
     background-position: -90px 0px;  
 }
-
 
 .logo-minus::before,
 .logo-clear::before,
@@ -259,4 +190,126 @@ input[type="radio"]:checked + label::before
 .logo-minus::before
 {
     background-position: -36px 0px; 
+}
+.name-matrix-radio
+{
+    height: 24px;
+    margin-right: 10px;
+}
+.control-background-error
+{
+    background-color: #f6c1c0;
+}
+.control-background-input
+{
+    background-color: #5199db;
+}
+.control-error
+{
+    color: #f00;
+}
+
+.main-form
+{
+    display: inline-block;
+}
+.top-matrix
+{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    padding-left: 20px;
+    padding-top: 5px;
+}
+.bottom-matrix
+{
+    display: inline-block;
+    padding: 20px;
+}
+.matrix
+{
+    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    margin: 10px;
+    margin-right: 20px;
+}
+.matrix-c
+{
+    margin-left: 5px;
+}
+.matrix-values
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+}
+.column
+{
+    display: inline-block;
+}
+.cell-matrix
+{
+    display: block;
+    text-align: center;
+    padding-top: 14px;
+
+    width: 40px;
+    height: 26px;
+    margin: 10px 10px 10px 0px; 
+    border: 1px solid #bbb;
+    border-top: 1px solid #999;
+}
+.cell-matrix:focus
+{
+    border: 1px solid #5199db;
+    box-shadow: 1px 1px #5199db,
+        -1px 1px #5199db,
+        -1px -1px #5199db,
+        1px -1px #5199db;
+}
+
+.border-left
+{
+    width: 10px;
+    border-left: 2px solid #000;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+.border-right
+{
+    width: 10px;
+    margin-left: -10px;
+    border-right: 2px solid #000;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+.name-matrix
+{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.separator
+{
+    width: 100%;
+}
+.separator-10
+{
+    width: 100%;
+    height: 10px;
+}
+.separator-50
+{
+    width: 100%;
+    height: 50px;
+}
+.hidden
+{
+    display: none;
 }
